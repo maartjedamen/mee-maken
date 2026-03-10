@@ -1,0 +1,271 @@
+---
+const { title } = Astro.props;
+import "../styles/global.css";
+
+import Logo from "../components/Logo.astro";
+
+const pathname = Astro.url.pathname;
+const isHome = pathname === "/";
+
+const isActive = (href) => {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(href + "/");
+};
+
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/denken", label: "Denken" },
+  { href: "/doen", label: "Doen" },
+  { href: "/delen", label: "Delen" },
+];
+---
+
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Fonts: Inter (UI) + Literata (reading) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Literata:opsz,wght@7..72,300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="page">
+    <!-- Sticky line system
+         - If #sticky-line-anchor exists: state machine (bottom -> none -> top)
+         - Else: top line always visible (all non-home pages) -->
+    <div class="stickyline stickyline--top" aria-hidden="true"></div>
+    <div class="stickyline stickyline--bottom" aria-hidden="true"></div>
+
+    {!isHome && (
+      <a
+        href="javascript:history.back()"
+        class="fixed top-4 left-4 z-50 font-ui text-sm text-muted flex items-center gap-1 hover:underline focus:outline-none focus-visible:ring-2"
+        aria-label="Terug naar vorige pagina"
+      >
+        <span aria-hidden="true">‹</span>
+        <span>terug</span>
+      </a>
+    )}
+
+    <!-- Menu toggle -->
+    <button
+      id="menu-toggle"
+      class="fixed top-4 right-4 z-50 flex flex-col items-center justify-center space-y-1.5 font-ui"
+      aria-label="Menu"
+      aria-expanded="false"
+      aria-controls="sidebar"
+    >
+      <span class="menu-line block w-6 h-0.5 bg-fg transition-colors duration-300"></span>
+      <span class="menu-line block w-6 h-0.5 bg-fg transition-colors duration-300"></span>
+      <span class="menu-line block w-6 h-0.5 bg-fg transition-colors duration-300"></span>
+    </button>
+
+
+    <!-- Page canvas -->
+    <main class="min-h-screen">
+      <div id="main-content" class="transition-transform duration-300">
+        <div class="max-w-6xl mx-auto px-4 md:px-8">
+          <div class="py-10 md:py-14">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer (gecentreerd + logo 50% van hoofdlogo) -->
+    <footer class="py-10 text-sm text-muted font-ui">
+      <div class="max-w-6xl mx-auto px-4 md:px-8">
+        <div class="flex flex-col items-center text-center gap-4">
+          <Logo class="w-14 h-14 md:w-[5.5rem] md:h-[5.5rem] text-accent" />
+          <div class="space-y-2">
+            <div>© 2025 Maartje Damen.</div>
+            <a href="mailto:maartje.damen98@gmail.com" class="a-link">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Overlay -->
+    <div
+      id="overlay"
+      class="fixed inset-0 opacity-0 pointer-events-none transition-opacity duration-300 z-40"
+      style="background-color: rgb(var(--c-fg) / 0.25);"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside
+      id="sidebar"
+      class="fixed top-0 right-0 h-full w-72 bg-bg border-l transform translate-x-full transition-transform duration-300 z-50 font-ui"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+      aria-hidden="true"
+    >
+      <div class="p-6">
+        <h2 class="text-sm uppercase tracking-wider mb-6 text-muted">Navigatie</h2>
+
+        <nav aria-label="Hoofdmenu">
+          <ul class="space-y-3">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <li>
+                  <a
+                    href={item.href}
+                    class="nav-link"
+                    aria-current={active ? "page" : undefined}
+                    data-active={active ? "true" : "false"}
+                  >
+                    <span class="nav-dot" aria-hidden="true"></span>
+                    <span>{item.label}</span>
+                  </a>
+                </li>
+              );
+            })}
+            <li class="pt-4">
+              <a href="mailto:maartje.damen98@gmail.com" class="nav-link" data-active="false">
+                <span class="nav-dot" aria-hidden="true"></span>
+                <span>Mail</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <script>
+      // Sidebar
+      const menuToggle = document.getElementById("menu-toggle");
+      const sidebar = document.getElementById("sidebar");
+      const mainContent = document.getElementById("main-content");
+      const overlay = document.getElementById("overlay");
+
+      const openMenu = () => {
+        sidebar.classList.remove("translate-x-full");
+        overlay.classList.remove("opacity-0", "pointer-events-none");
+        mainContent.classList.add("-translate-x-72");
+        menuToggle.setAttribute("aria-expanded", "true");
+        sidebar.setAttribute("aria-hidden", "false");
+        document.body.classList.add("overflow-hidden");
+      };
+
+      const closeMenu = () => {
+        sidebar.classList.add("translate-x-full");
+        overlay.classList.add("opacity-0", "pointer-events-none");
+        mainContent.classList.remove("-translate-x-72");
+        menuToggle.setAttribute("aria-expanded", "false");
+        sidebar.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("overflow-hidden");
+      };
+
+      menuToggle.addEventListener("click", () => {
+        const isClosed = sidebar.classList.contains("translate-x-full");
+        isClosed ? openMenu() : closeMenu();
+      });
+
+      overlay.addEventListener("click", closeMenu);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+      });
+
+      // Sticky line state machine
+      const root = document.documentElement;
+      const anchor = document.getElementById("sticky-line-anchor");
+
+      // Default (no anchor): show TOP line always (for all non-home pages)
+      // If you ever want to disable on home without anchor, we can gate by pathname,
+      // but your rule is: other pages always top visible.
+      if (!anchor) {
+        root.classList.add("stickyline-default-top");
+      } else {
+        root.classList.add("has-stickyline");
+
+        const update = () => {
+          const r = anchor.getBoundingClientRect();
+          const vh = window.innerHeight || document.documentElement.clientHeight;
+          const h = 2;
+
+          // A: anchor is below bottom edge -> bottom visible
+          const belowBottom = r.top > (vh - h);
+
+          // C: anchor has passed the top edge -> top visible
+          const pastTop = r.top <= h;
+
+          // B: anchor somewhere in between -> no fixed line
+          root.classList.toggle("stickyline-below-bottom", belowBottom);
+          root.classList.toggle("stickyline-past-top", pastTop);
+        };
+
+        // Keep it efficient: observer wakes us up, but we compute exact states via rect.
+        const obs = new IntersectionObserver(() => update(), { threshold: [0] });
+        obs.observe(anchor);
+
+        window.addEventListener("scroll", update, { passive: true });
+        window.addEventListener("resize", update);
+        update();
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --stickyline-h: 2px;
+        --stickyline-z: 60;
+      }
+
+      .stickyline {
+        height: var(--stickyline-h);
+        background: rgb(var(--c-accent));
+        width: 100%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .stickyline--top {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: var(--stickyline-z);
+      }
+
+      .stickyline--bottom {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--stickyline-z);
+      }
+
+      /* DEFAULT (no anchor): top line always visible */
+      html.stickyline-default-top .stickyline--top {
+        opacity: 1;
+      }
+      html.stickyline-default-top .stickyline--bottom {
+        opacity: 0;
+      }
+
+      /* With anchor: state machine */
+      html.has-stickyline .stickyline--top,
+      html.has-stickyline .stickyline--bottom {
+        opacity: 0;
+      }
+
+      /* A: anchor below bottom -> show bottom */
+      html.has-stickyline.stickyline-below-bottom .stickyline--bottom {
+        opacity: 1;
+      }
+
+      /* C: anchor past top -> show top */
+      html.has-stickyline.stickyline-past-top .stickyline--top {
+        opacity: 1;
+      }
+
+      /* In between (B): both hidden (implicit) */
+    </style>
+  </body>
+</html>

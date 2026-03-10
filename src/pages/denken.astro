@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+// Curated volgorde: publicaties eerst
+const seriesOrder = [
+  {
+    key: "media",
+    title: "publicaties",
+    description: "Stukken geschreven binnen een redactionele context.",
+  },
+  {
+    key: "ongefilterd",
+    title: "ongefilterde gedachten",
+    description:
+      "Korte essays waarin ik ideeën orden, spanning zichtbaar maak en het gesprek open probeer te leggen.",
+  },
+  {
+    key: "anders",
+    title: "werk in uitvoering",
+    description: "Fragmenten en gedachtes, georganiseerd richting een groter werk.",
+  },
+];
+
+const entries = await getCollection("denken");
+
+// Nieuwste eerst; zonder datum komen onderaan
+entries.sort((a, b) => {
+  const da = a.data.date ? new Date(a.data.date).getTime() : -Infinity;
+  const db = b.data.date ? new Date(b.data.date).getTime() : -Infinity;
+  if (da !== db) return db - da;
+  return a.data.title.localeCompare(b.data.title);
+});
+
+const bySeries = (key) =>
+  entries.filter((e) => (e.data.series ?? "ongefilterd") === key);
+---
+<BaseLayout title="Denken">
+  <main class="max-w-6xl mx-auto px-6 md:px-12">
+    <header
+      class="py-8 md:py-10 border-b"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+    >
+      <h1 class="font-ui text-xl md:text-2xl font-semibold text-center">
+        Denken
+      </h1>
+
+      <p class="mt-4 mx-auto max-w-prose text-center text-base text-muted">
+        Hier verzamel ik essays, opinies en ongefilterde gedachten over sport, democratie,
+        samenleven en de rol van de ambtenaar.  
+      </p>
+    </header>
+
+    <section class="py-10 md:py-12 space-y-14">
+      {seriesOrder.map((s) => (
+        <section class="space-y-6">
+          {/* Curated section header: center + same container width */}
+          <div class="text-center">
+            <h2 class="text-lg md:text-xl font-semibold text-brand font-ui">
+              {s.title}
+            </h2>
+            <p class="mt-2 mx-auto max-w-prose text-sm md:text-base text-fg">
+              {s.description}
+            </p>
+          </div>
+
+          <div class="grid gap-6 md:gap-8 md:grid-cols-2">
+            {bySeries(s.key).length > 0 ? (
+              bySeries(s.key).map((e) => {
+                // Altijd intern linken (detailpagina toont evt. "gepubliceerd op")
+                const href = `/denken/${e.slug}`;
+
+                return (
+                  <a href={href} class="card card-hover p-7 transition">
+                    <div class="flex items-start justify-between gap-4">
+                      <h3 class="font-semibold leading-snug text-brand font-ui">
+                        {e.data.title}
+                      </h3>
+                      {e.data.externalUrl ? (
+                        <span
+                          class="text-sm text-accent font-ui"
+                          aria-label="Extern gepubliceerd"
+                          title="Extern gepubliceerd"
+                        >
+                          ↗
+                        </span>
+                      ) : null}
+                    </div>
+
+                    {e.data.subtitle ? (
+                      <p class="mt-2 text-fg">{e.data.subtitle}</p>
+                    ) : null}
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {(e.data.tags ?? []).map((t) => (
+                        <span class="pill">{t}</span>
+                      ))}
+                      {e.data.externalUrl ? <span class="pill">extern</span> : null}
+                    </div>
+                  </a>
+                );
+              })
+            ) : (
+              <div class="card p-6 text-center">
+                <p class="meta">Komt binnenkort.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      ))}
+
+      <div class="card p-6 text-center">
+        <p class="font-semibold mb-1 text-brand font-ui">Gedachten delen?</p>
+        <p class="meta text-sm mb-4">
+          Reacties komen hier later. Voor nu: stuur me gerust een bericht.
+        </p>
+        <a href="mailto:maartje.damen98@gmail.com" class="a-link">
+          Neem contact op
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,568 @@
+---
+import { getCollection } from "astro:content";
+
+const cvEntries = await getCollection("cv");
+const cv = cvEntries[0];
+const items = [...(cv?.data?.items ?? [])];
+
+const parseYM = (ym) => {
+  const [y, m] = ym.split("-").map((n) => Number(n));
+  return y * 12 + (m - 1);
+};
+
+// newest first
+//items.sort((a, b) => parseYM(b.start) - parseYM(a.start));
+
+// compressed spacing (1–24 months => 0.9–2.6rem)
+const gaps = items.map((it, idx) => {
+  if (idx === 0) return 0;
+  const prev = items[idx - 1];
+  const d = Math.max(1, parseYM(prev.start) - parseYM(it.start));
+  const rem = 0.9 + Math.min(24, d) * (1.7 / 24);
+  return Number(rem.toFixed(2));
+});
+
+const bucketLabel = {
+  work: "Werk",
+  education: "Educatie",
+  sport: "Sport",
+  courses: "Cursussen",
+  volunteer: "Vrijwillig",
+  hobby: "Hobby",
+  research: "Research",
+};
+
+const sideFor = (bucket) => (bucket === "work" || bucket === "education" ? "left" : "right");
+
+// Active if years contains "heden" or "present" (case-insensitive)
+const isActive = (years = "") => /(?:\bheden\b|\bpresent\b)/i.test(String(years));
+---
+
+<section class="mt-10">
+  <div class="cv" aria-label="CV timeline">
+    {items.map((item, idx) => {
+      const side = sideFor(item.bucket);
+      const label = bucketLabel[item.bucket] ?? item.bucket;
+      const active = isActive(item.years);
+
+      return (
+        <div
+          class={`cv-row cv-row--${side}`}
+          data-cv-row
+          data-active={active ? "true" : undefined}
+          style={`--cv-gap:${gaps[idx]}rem`}
+        >
+          {/* LEFT column */}
+          <div class="cv-col cv-col--left">
+            {side === "left" ? (
+              <details class="cv-card" data-cv>
+                <summary class="cv-summary">
+                  <span class="cv-pill pill" aria-hidden="true">{label}</span>
+
+                  <div class="cv-meta">
+                    <div class="cv-years">{item.years}</div>
+                    <div class="cv-title font-ui">{item.title}</div>
+                    {item.summary ? <div class="cv-short">{item.summary}</div> : null}
+                  </div>
+                </summary>
+
+                {(item.body?.length || item.link || item.image || item.media?.length) ? (
+                  <div class="cv-body">
+                    {(item.body ?? []).map((p) => <p class="cv-p">{p}</p>)}
+
+                    {/* Preferred: media previews gallery */}
+                    {item.media?.length ? (
+                      <div class="cv-gallery" aria-label="Portfolio previews">
+                        {item.media.map((m) => (
+                          <button
+                            type="button"
+                            class="cv-figure"
+                            data-media-src={m.src}
+                            data-media-type={m.type}
+                            data-media-label={m.label ?? ""}
+                            aria-label={m.label ?? (m.type === "pdf" ? "Open PDF" : "Open afbeelding")}
+                          >
+                            {m.type === "pdf" ? (
+                              <div class="cv-pdf">
+                                <div class="cv-pdf__icon" aria-hidden="true">PDF</div>
+                                <div class="cv-pdf__meta">
+                                  <div class="cv-pdf__title">{m.label ?? "Open PDF"}</div>
+                                  <div class="cv-pdf__hint">Klik om paginagroot te openen</div>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <img src={m.src} alt={m.label ?? ""} loading="lazy" />
+                                <span class="cv-figure-caption">
+                                  {m.label ?? "Open visual"} · klik voor groot
+                                </span>
+                              </>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {/* Backward compatible: single image preview */}
+                    {!item.media?.length && item.image ? (
+                      <button
+                        type="button"
+                        class="cv-figure"
+                        data-media-src={item.image}
+                        data-media-type="image"
+                        data-media-label="Visual"
+                        aria-label="Open visual"
+                      >
+                        <img src={item.image} alt="" loading="lazy" />
+                        <span class="cv-figure-caption">Open visual · klik voor groot</span>
+                      </button>
+                    ) : null}
+
+                    {item.link ? (
+                      <a class="cv-link a-link" href={item.link.href}>{item.link.label}</a>
+                    ) : null}
+                  </div>
+                ) : null}
+              </details>
+            ) : null}
+          </div>
+
+          {/* MID column */}
+          <div class="cv-col cv-col--mid" aria-hidden="true">
+            <div class="cv-mid">
+              <span class="cv-dot" data-cv-dot></span>
+            </div>
+          </div>
+
+          {/* RIGHT column */}
+          <div class="cv-col cv-col--right">
+            {side === "right" ? (
+              <details class="cv-card" data-cv>
+                <summary class="cv-summary">
+                  <span class="cv-pill pill" aria-hidden="true">{label}</span>
+
+                  <div class="cv-meta">
+                    <div class="cv-years">{item.years}</div>
+                    <div class="cv-title font-ui">{item.title}</div>
+                    {item.summary ? <div class="cv-short">{item.summary}</div> : null}
+                  </div>
+                </summary>
+
+                {(item.body?.length || item.link || item.image || item.media?.length) ? (
+                  <div class="cv-body">
+                    {(item.body ?? []).map((p) => <p class="cv-p">{p}</p>)}
+
+                    {item.media?.length ? (
+                      <div class="cv-gallery" aria-label="Portfolio previews">
+                        {item.media.map((m) => (
+                          <button
+                            type="button"
+                            class="cv-figure"
+                            data-media-src={m.src}
+                            data-media-type={m.type}
+                            data-media-label={m.label ?? ""}
+                            aria-label={m.label ?? (m.type === "pdf" ? "Open PDF" : "Open afbeelding")}
+                          >
+                            {m.type === "pdf" ? (
+                              <div class="cv-pdf">
+                                <div class="cv-pdf__icon" aria-hidden="true">PDF</div>
+                                <div class="cv-pdf__meta">
+                                  <div class="cv-pdf__title">{m.label ?? "Open PDF"}</div>
+                                  <div class="cv-pdf__hint">Klik om paginagroot te openen</div>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <img src={m.src} alt={m.label ?? ""} loading="lazy" />
+                                <span class="cv-figure-caption">
+                                  {m.label ?? "Open visual"} · klik voor groot
+                                </span>
+                              </>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {!item.media?.length && item.image ? (
+                      <button
+                        type="button"
+                        class="cv-figure"
+                        data-media-src={item.image}
+                        data-media-type="image"
+                        data-media-label="Visual"
+                        aria-label="Open visual"
+                      >
+                        <img src={item.image} alt="" loading="lazy" />
+                        <span class="cv-figure-caption">Open visual · klik voor groot</span>
+                      </button>
+                    ) : null}
+
+                    {item.link ? (
+                      <a class="cv-link a-link" href={item.link.href}>{item.link.label}</a>
+                    ) : null}
+                  </div>
+                ) : null}
+              </details>
+            ) : null}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  {/* Global modal for images & PDFs */}
+  <dialog class="media-dialog" id="mediaDialog" aria-label="Portfolio viewer">
+    <div class="media-dialog__inner">
+      <div class="media-dialog__top">
+        <div class="media-dialog__title" id="mediaTitle"></div>
+        <button type="button" class="media-dialog__close" id="mediaClose" aria-label="Sluiten">✕</button>
+      </div>
+      <div class="media-dialog__content" id="mediaContent"></div>
+    </div>
+  </dialog>
+
+  <script is:inline>
+    // Accordion + dot fill (row state)
+    const rows = Array.from(document.querySelectorAll('[data-cv-row]'));
+    const allDetails = rows.map(r => r.querySelector('details[data-cv]')).filter(Boolean);
+
+    const sync = () => {
+      rows.forEach((r) => {
+        const det = r.querySelector('details[data-cv]');
+        r.toggleAttribute('data-open', !!det && det.open);
+      });
+    };
+
+    allDetails.forEach((d) => {
+      d.addEventListener('toggle', () => {
+        if (d.open) {
+          allDetails.forEach((other) => {
+            if (other !== d) other.removeAttribute('open');
+          });
+        }
+        sync();
+      });
+    });
+
+    sync();
+
+    // Media dialog (PNG/JPG/PDF)
+    const dialog = document.getElementById('mediaDialog');
+    const mediaTitle = document.getElementById('mediaTitle');
+    const mediaContent = document.getElementById('mediaContent');
+    const mediaClose = document.getElementById('mediaClose');
+
+    const openMedia = ({ src, type, label }) => {
+      if (!dialog || !mediaContent || !mediaTitle) return;
+      mediaTitle.textContent = label || '';
+      mediaContent.innerHTML = '';
+
+      if (type === 'pdf') {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.title = label || 'PDF';
+        iframe.className = 'media-dialog__frame';
+        mediaContent.appendChild(iframe);
+      } else {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = label || 'Afbeelding';
+        img.loading = 'lazy';
+        img.className = 'media-dialog__img';
+        mediaContent.appendChild(img);
+      }
+
+      dialog.showModal();
+    };
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-media-src]');
+      if (!trigger) return;
+
+      openMedia({
+        src: trigger.getAttribute('data-media-src'),
+        type: trigger.getAttribute('data-media-type') || 'image',
+        label: trigger.getAttribute('data-media-label') || ''
+      });
+    });
+
+    mediaClose?.addEventListener('click', () => dialog?.close());
+
+    dialog?.addEventListener('click', (e) => {
+      const inner = dialog.querySelector('.media-dialog__inner');
+      if (inner && !inner.contains(e.target)) dialog.close();
+    });
+  </script>
+
+  <style>
+    .cv {
+      position: relative;
+      margin-inline: auto;
+      max-width: 980px;
+      padding: 1.2rem 0 2.2rem;
+      display: grid;
+      gap: 0;
+
+      --cv-mid: 44px;
+      --cv-line-w: 2px;
+      --cv-dot: 12px;
+      --cv-axis-right: 14px;
+    }
+
+    .cv::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: var(--cv-line-w);
+      transform: translateX(calc(var(--cv-line-w) / -2));
+      background: rgb(var(--c-accent));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cv-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--cv-mid) minmax(0, 1fr);
+      align-items: start;
+      margin-top: var(--cv-gap);
+      position: relative;
+      z-index: 1;
+    }
+
+    .cv-col--mid {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .cv-mid {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding-top: 1.15rem;
+    }
+
+    .cv-dot {
+      width: var(--cv-dot);
+      height: var(--cv-dot);
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+      box-shadow: 0 0 0 4px rgb(var(--c-accent) / 0.12);
+      position: relative;
+      z-index: 2;
+    }
+
+    .cv-row[data-open] .cv-dot {
+      background: rgb(var(--c-accent));
+      border-color: rgb(var(--c-accent));
+      box-shadow: 0 0 0 6px rgb(var(--c-accent) / 0.18);
+    }
+
+
+    .cv-card {
+      background: rgb(var(--c-surface));
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      position: relative;
+    }
+    /* Active marker: subtle accent ring around the card (not the dot) */
+    .cv-row[data-active="true"] .cv-card {
+      border-color: rgb(var(--c-fg) / 0.28);
+      box-shadow: 0 0 0 4px rgb(var(--c-fg) / 0.10);
+    }
+
+    /* If the active card is also open, make it a touch clearer */
+    .cv-row[data-active="true"][data-open] .cv-card {
+      border-color: rgb(var(--c-accent) / 0.42);
+      box-shadow: 0 0 0 5px rgb(var(--c-accent) / 0.14);
+    }
+
+    .cv-row--left .cv-col--right { visibility: hidden; }
+    .cv-row--right .cv-col--left { visibility: hidden; }
+
+    @media (min-width: 768px) {
+      .cv-row--left .cv-card::after,
+      .cv-row--right .cv-card::after {
+        content: "";
+        position: absolute;
+        top: calc(1.15rem + (var(--cv-dot) / 2));
+        height: 1px;
+        background: rgb(var(--c-fg) / var(--border-alpha));
+        width: calc(var(--cv-mid) / 2);
+        pointer-events: none;
+      }
+      .cv-row--left .cv-card::after { right: calc(-1 * (var(--cv-mid) / 2)); }
+      .cv-row--right .cv-card::after { left:  calc(-1 * (var(--cv-mid) / 2)); }
+    }
+
+    .cv-summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding: 1rem 1.1rem;
+    }
+    .cv-summary::-webkit-details-marker { display: none; }
+
+    .cv-pill {
+      position: absolute;
+      top: 0.9rem;
+    }
+    .cv-row--left .cv-pill { left: 1.1rem; }
+    .cv-row--right .cv-pill { right: 1.1rem; }
+
+    .cv-meta { display: grid; gap: 0.25rem; padding-top: 1.3rem; }
+    .cv-years { font-size: 0.875rem; color: rgb(var(--c-fg) / 0.72); }
+    .cv-title { font-weight: 600; line-height: 1.25; }
+    .cv-short { font-size: 0.95rem; color: rgb(var(--c-fg) / 0.86); }
+
+    .cv-body {
+      border-top: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+      padding: 0.85rem 1.1rem 1rem 1.1rem;
+    }
+    .cv-p { margin-top: 0.7rem; line-height: 1.55; }
+
+    .cv-gallery { display: grid; gap: 0.9rem; margin-top: 1rem; }
+
+    .cv-figure {
+      display: grid;
+      gap: 0.4rem;
+      margin: 0;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      text-align: left;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .cv-figure img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    }
+
+    .cv-figure-caption {
+      font-size: 0.85rem;
+      color: rgb(var(--c-fg) / 0.72);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .cv-pdf {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+      background: rgb(var(--c-surface));
+    }
+
+    .cv-pdf__icon {
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    }
+
+    .cv-pdf__title { font-weight: 600; }
+    .cv-pdf__hint { font-size: 0.85rem; color: rgb(var(--c-fg) / 0.72); }
+
+    @media (max-width: 767px) {
+      .cv::before {
+        left: auto;
+        right: var(--cv-axis-right);
+        transform: none;
+      }
+
+      .cv-row {
+        grid-template-columns: 1fr 22px;
+      }
+
+      .cv-row--left .cv-col--right { display: none; visibility: visible; }
+      .cv-row--right .cv-col--left { display: none; visibility: visible; }
+
+      .cv-col--mid { justify-content: flex-end; }
+
+      .cv-mid {
+        justify-content: flex-end;
+        padding-top: 1.15rem;
+      }
+
+      .cv-dot {
+        margin-right: calc(var(--cv-axis-right) - 11px);
+      }
+
+      .cv-card::after { display: none; }
+    }
+
+    /* Modal */
+    .media-dialog {
+      width: min(1100px, 96vw);
+      height: min(92vh, 980px);
+      border: none;
+      padding: 0;
+      border-radius: 16px;
+    }
+
+    .media-dialog::backdrop { background: rgba(0,0,0,0.55); }
+
+    .media-dialog__inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      background: rgb(var(--c-surface));
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    }
+
+    .media-dialog__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    }
+
+    .media-dialog__title { font-weight: 600; line-height: 1.2; }
+
+    .media-dialog__close {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 6px 8px;
+      color: inherit;
+    }
+
+    .media-dialog__content { flex: 1; overflow: auto; padding: 12px; }
+
+    .media-dialog__img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    }
+
+    .media-dialog__frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: #fff;
+    }
+  </style>
+</section>

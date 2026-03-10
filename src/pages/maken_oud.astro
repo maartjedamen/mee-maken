@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Logo from "../components/Logo.astro";
+
+const pages = Array.from({ length: 16 }, (_, i) => i + 1);
+---
+
+<BaseLayout title="Mee maken">
+  <section class="frame frame--brand">
+    <div class="text-center pt-8">
+      <a href="/#" class="inline-flex items-center justify-center p-2 rounded-xl">
+        <Logo class="w-24 h-24 md:w-28 md:h-28 text-accent" />
+      </a>
+    </div>
+
+    <div class="px-6 md:px-12 py-10 font-ui">
+      <h1 class="text-xl md:text-2xl font-semibold text-center mb-6">
+        Mee maken
+      </h1>
+
+      <p class="measure mx-auto text-center">
+        Op deze pagina vind je misschien wel redenen om samen te werken. Mijn CV & mijn projectportfolio kan je hier vinden.
+      </p>
+      <p class="measure mx-auto text-center font-semibold mt-2">
+        Voeg hier CV in, misschien weer in markdown?
+      </p>
+
+      <!-- Grote previews (desktop-first) -->
+      <div class="space-y-8 mt-10">
+        {pages.map((n) => (
+          <a
+            href="/portfolio.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="card card-hover overflow-hidden transition"
+          >
+            <img
+              src={`/portfolio/portfolio-${String(n).padStart(2, "0")}.png`}
+              alt={`Portfolio pagina ${n}`}
+              class="w-full h-auto"
+              loading="lazy"
+            />
+          </a>
+        ))}
+      </div>
+
+      <!-- Volledige PDF -->
+      <div class="text-center mt-10">
+        <a
+          href="/portfolio.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-accent"
+        >
+          Open volledige portfolio (PDF)
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

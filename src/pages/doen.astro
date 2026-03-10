@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import InteractiveCV from "../components/InteractiveCV.astro";
+import ProductsGrid from "../components/ProductsGrid.astro";
+---
+
+<BaseLayout title="Doen">
+  <main class="max-w-6xl mx-auto px-6 md:px-12">
+    <header
+      class="py-8 md:py-10 border-b text-center"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+    >
+      <h1 class="font-ui text-xl md:text-2xl font-semibold">Doen</h1>
+
+      <p class="mt-4 mx-auto max-w-prose text-base text-muted">
+        Dit is mijn werk in blokjes. Soms als rol, soms als project, soms als leerlijn.
+        Het is een interface om snel te begrijpen wat ik heb gedaan en waar ik naartoe werk.
+      </p>
+    </header>
+
+    <ProductsGrid />
+
+    <section class="py-10 md:py-12">
+      <p class="mt-0 mx-auto max-w-prose text-sm text-fg text-center">
+        Klik op een blok om uit te klappen. Er kan steeds één open staan.
+      </p>
+
+      <div class="mt-6">
+        <InteractiveCV />
+      </div>
+    </section>
+
+    <section class="pb-10 md:pb-12">
+      <div class="card p-6 text-center">
+        <p class="font-semibold mb-1 text-brand font-ui">Samen iets doen?</p>
+        <p class="meta text-sm mb-4">
+          Wil je sparren of samenwerken? Stuur me gerust een bericht.
+        </p>
+        <a href="mailto:maartje.damen98@gmail.com" class="btn-accent">
+          Kom in contact
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

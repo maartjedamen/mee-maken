@@ -1,0 +1,77 @@
+---
+// No frontmatter needed unless you're passing props
+---
+
+<div class="timeline-container">
+  <div class="timeline-row">
+    <span class="timeline-label">Career</span>
+    <div class="timeline-line">
+      <a href="/projects/project1" class="timeline-dot" style="left: 10%;" title="Project 1"></a>
+      <a href="/projects/project2" class="timeline-dot" style="left: 40%;" title="Project 2"></a>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <span class="timeline-label">Sports</span>
+    <div class="timeline-line">
+      <a href="/projects/project1" class="timeline-dot" style="left: 10%;" title="Project 1"></a>
+      <a href="/projects/project2" class="timeline-dot" style="left: 40%;" title="Project 2"></a>
+    </div>
+  </div>
+  <div class="timeline-row">
+    <span class="timeline-label">interests</span>
+    <div class="timeline-line">
+      <a href="/projects/project1" class="timeline-dot" style="left: 10%;" title="Project 1"></a>
+      <a href="/projects/project2" class="timeline-dot" style="left: 40%;" title="Project 2"></a>
+    </div>
+  </div>
+    <div class="timeline-row">
+    <span class="timeline-label">creating</span>
+    <div class="timeline-line">
+      <a href="/projects/project1" class="timeline-dot" style="left: 10%;" title="Project 1"></a>
+      <a href="/projects/project2" class="timeline-dot" style="left: 40%;" title="Project 2"></a>
+    </div>
+  </div>
+  <!-- Repeat for other categories: Sports, Crafting, etc. -->
+</div>
+
+<style>
+  .timeline-container {
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .timeline-row {
+    position: relative;
+    margin-bottom: 2rem;
+    height: 2rem;
+  }
+
+  .timeline-label {
+    position: absolute;
+    left: 0;
+    top: -1.5rem;
+    font-weight: bold;
+  }
+
+  .timeline-line {
+    position: relative;
+    height: 100%;
+    border-top: 2px solid #ccc;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    top: -0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: #FF6F61; /* Primary color */
+    border-radius: 50%;
+    transform: translateX(-50%);
+    transition: background-color 0.3s;
+  }
+
+  .timeline-dot:hover {
+    background-color: #e65c50; /* Darker shade on hover */
+  }
+</style>

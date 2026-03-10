@@ -1,0 +1,340 @@
+---
+/**
+ * Interactive CV timeline (Astro component)
+ * - Uses <details>/<summary> for accessibility + progressive enhancement.
+ * - Small inline script ensures only one item is open at a time.
+ *
+ * Notes for Maartje:
+ * - Update the `items` array with new roles/projects.
+ * - Keep `summary` short (max ~10 words) for the collapsed tile.
+ * - Optional: add `image` (path in /public) and `link` (portfolio page).
+ */
+const items = [
+  {
+    side: "right",
+    years: "Jul 2025 – heden",
+    title: "Procesregie participatie & voorlichting (Gemeente Almere – Stadsreiniging)",
+    summary: "Collectieve verantwoordelijkheid organiseren in de stad",
+    body: [
+      "Procesregie op participatie, voorlichting en onderzoek rond ‘Samen Schoon’.",
+      "Opbouw en versterking van vrijwilligersnetwerk (Supporters van Schoon), wijkgericht werken en samenwerking met partners.",
+      "Focus: eigenaarschap, community-vorming, gedragsverandering en een uitvoerbare gemeentelijke werkwijze."
+    ],
+    link: { href: "/#contact", label: "Samenwerken? Neem contact op" },
+    image: null,
+  },
+  {
+    side: "left",
+    years: "Mar 2025 – heden",
+    title: "Consultant Spatial Development (Wyzer Advies Ruimte)",
+    summary: "Socio-ruimtelijke vraagstukken, beleid en uitvoering verbinden",
+    body: [
+      "Advies en begeleiding bij gebiedsontwikkeling, duurzaamheid en samenwerking onder de Omgevingswet.",
+      "Data-gedreven en ontwerpende benadering om complexe vraagstukken begrijpelijk en uitvoerbaar te maken.",
+      "Werkt graag op het snijvlak van analyse, stakeholders en impact op bewoners."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "right",
+    years: "Dec 2024 – heden",
+    title: "Voorzitter Atletencommissie (KNRB / TeamNL Roeien)",
+    summary: "Atletenstem, governance en beleid verbeteren",
+    body: [
+      "Vertegenwoordigt topsportatleten in een periode van organisatorische verandering.",
+      "Adviseert over meerjarenbeleid, afspraken, jaarplannen en dagelijkse atleet-thema’s (o.a. voeding, sponsoring).",
+      "Rol op het snijvlak van governance, prestatie en welzijn; stakeholdermanagement en onderhandeling."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "left",
+    years: "Feb 2025",
+    title: "Community Researcher (The School for Moral Ambition)",
+    summary: "56 interviews → programma- en onboardingstrategie",
+    body: [
+      "UX-/community-onderzoek sprint: 56 interviews, analyse en vertaling naar strategie en programmapropositie.",
+      "Deliverables: segmentatie, journeys/mindsets, aanbevelingen voor opschaling naar tienduizenden deelnemers."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "right",
+    years: "Sep 2021 – Jul 2024 (en Jan–Nov 2020)",
+    title: "Professioneel roeier (TeamNL / KNRB)",
+    summary: "Presteren onder druk, veerkracht en teamleiderschap",
+    body: [
+      "Internationale prestaties (o.a. EK-brons) en jarenlang topsportprogramma.",
+      "Ontwikkelde discipline, strategisch denken en samenwerken in high-performance teams.",
+      "Ervaring met onzekerheid, selectieprocessen en het bouwen aan een leer- en teamcultuur."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "left",
+    years: "Sep 2021 – Oct 2024",
+    title: "MSc Building Technology (TU Delft)",
+    summary: "Urban Digital Twins voor circadian light analyses",
+    body: [
+      "Afstudeeronderzoek: city-scale analyse van gevel- en stadsverlichting op circadiane gezondheid.",
+      "Sterk in computational design, research en maatschappelijke duiding.",
+      "Cijfers o.a.: Design Informatics 8.5, Architecture & Philosophy 9.0."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "right",
+    years: "Sep 2017 – Apr 2021",
+    title: "BSc Bouwkunde (TU Delft)",
+    summary: "Ontwerp, data en sociaal-ruimtelijke ongelijkheid",
+    body: [
+      "Minors: Cities, Migration & Socio-Spatial Inequality; Spatial Computing in Architectural Design.",
+      "Projecten met GIS/3DBAG en participatieve methoden; focus op impact van ontwerpkeuzes."
+    ],
+    link: null,
+    image: null,
+  },
+  {
+    side: "left",
+    years: "Sep 2019 – Nov 2019",
+    title: "Stage (Veldacademie, Rotterdam)",
+    summary: "Gebiedsontwerp op basis van GIS + participatie",
+    body: [
+      "Ontwerpproject rond sociaal-ruimtelijke ongelijkheid (Tarwewijk/Zuidplein).",
+      "Combinatie van lokale verhalen, data en ruimtelijke analyse."
+    ],
+    link: null,
+    image: null,
+  },
+];
+
+const leftItems = items.filter((i) => i.side === "left");
+const rightItems = items.filter((i) => i.side === "right");
+---
+
+<section class="mt-10">
+  <h2 class="text-lg md:text-xl font-semibold text-center">Interactief CV</h2>
+  <p class="measure mx-auto text-center mt-2">
+    Klik op een tegel voor toelichting. (Op mobiel staan ze onder elkaar.)
+  </p>
+
+  <div class="cv mt-8">
+    {items.map((item, idx) => (
+      <div class="cv-row" data-side={item.side}>
+        {/* Left column */}
+        <div class="cv-col cv-left">
+          {item.side === "left" ? (
+            <details class="cv-card" data-cv>
+              <summary class="cv-summary">
+                <div class="cv-meta">
+                  <div class="cv-years">{item.years}</div>
+                  <div class="cv-title">{item.title}</div>
+                  <div class="cv-short">{item.summary}</div>
+                </div>
+                <span class="cv-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="cv-body">
+                {item.body.map((p) => (
+                  <p class="cv-p">{p}</p>
+                ))}
+                {item.image ? (
+                  <a href={item.image} target="_blank" rel="noopener noreferrer" class="cv-figure">
+                    <img src={item.image} alt="" loading="lazy" />
+                    <span class="cv-figure-caption">Open visual</span>
+                  </a>
+                ) : null}
+                {item.link ? (
+                  <a class="cv-link" href={item.link.href}>{item.link.label}</a>
+                ) : null}
+              </div>
+            </details>
+          ) : (
+            <div class="cv-spacer" aria-hidden="true"></div>
+          )}
+        </div>
+
+        {/* Middle line + dot */}
+        <div class="cv-mid" aria-hidden="true">
+          <div class="cv-dot"></div>
+          <div class="cv-line"></div>
+        </div>
+
+        {/* Right column */}
+        <div class="cv-col cv-right">
+          {item.side === "right" ? (
+            <details class="cv-card" data-cv>
+              <summary class="cv-summary">
+                <div class="cv-meta">
+                  <div class="cv-years">{item.years}</div>
+                  <div class="cv-title">{item.title}</div>
+                  <div class="cv-short">{item.summary}</div>
+                </div>
+                <span class="cv-chevron" aria-hidden="true">▾</span>
+              </summary>
+              <div class="cv-body">
+                {item.body.map((p) => (
+                  <p class="cv-p">{p}</p>
+                ))}
+                {item.image ? (
+                  <a href={item.image} target="_blank" rel="noopener noreferrer" class="cv-figure">
+                    <img src={item.image} alt="" loading="lazy" />
+                    <span class="cv-figure-caption">Open visual</span>
+                  </a>
+                ) : null}
+                {item.link ? (
+                  <a class="cv-link" href={item.link.href}>{item.link.label}</a>
+                ) : null}
+              </div>
+            </details>
+          ) : (
+            <div class="cv-spacer" aria-hidden="true"></div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <script is:inline>
+    // Close other items when one opens (accordion behaviour).
+    const details = Array.from(document.querySelectorAll('details[data-cv]'));
+    details.forEach((d) => {
+      d.addEventListener('toggle', () => {
+        if (!d.open) return;
+        details.forEach((other) => {
+          if (other !== d) other.removeAttribute('open');
+        });
+      });
+    });
+  </script>
+
+  <style>
+    /* Keep styling local to this component */
+    .cv {
+      display: grid;
+      gap: 1.5rem;
+      margin-inline: auto;
+      max-width: 980px;
+    }
+    .cv-row {
+      display: grid;
+      grid-template-columns: 1fr 36px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .cv-mid {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      min-height: 100%;
+    }
+    .cv-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      opacity: 0.65;
+      border-radius: 999px;
+    }
+    .cv-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 25%, transparent);
+      margin-top: 16px;
+      z-index: 2;
+    }
+    .cv-card {
+      border: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      border-radius: 16px;
+      background: color-mix(in oklab, var(--surface) 92%, white);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .cv-summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      gap: 1rem;
+      align-items: start;
+      justify-content: space-between;
+      padding: 1rem 1.1rem;
+      user-select: none;
+    }
+    .cv-summary::-webkit-details-marker { display: none; }
+    .cv-meta { display: grid; gap: 0.25rem; }
+    .cv-years {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+    .cv-title {
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .cv-short {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+    .cv-chevron {
+      opacity: 0.8;
+      transform: translateY(2px);
+      transition: transform 160ms ease;
+    }
+    details[open] .cv-chevron { transform: rotate(180deg) translateY(-2px); }
+
+    .cv-body {
+      padding: 0 1.1rem 1rem 1.1rem;
+      border-top: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+      animation: cvFadeIn 180ms ease;
+    }
+    .cv-p {
+      margin-top: 0.75rem;
+      line-height: 1.55;
+    }
+    .cv-link {
+      display: inline-flex;
+      margin-top: 0.9rem;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .cv-figure {
+      display: grid;
+      gap: 0.4rem;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .cv-figure img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+    }
+    .cv-figure-caption {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .cv-spacer { height: 1px; }
+
+    @keyframes cvFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .cv-row { grid-template-columns: 1fr; }
+      .cv-mid { display: none; }
+      .cv-left, .cv-right { }
+    }
+  </style>
+</section>

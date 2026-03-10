@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const entries = await getCollection("events");
+
+// Simple ordering for now: active-ish first, then alphabetical.
+// (You can later add an explicit `order` field if you want full control.)
+const statusRank = (s) => {
+  if (!s) return 9;
+  if (s === "actief") return 0;
+  if (s === "in-ontwikkeling") return 1;
+  return 2; // archief
+};
+
+entries.sort((a, b) => {
+  const ra = statusRank(a.data.status);
+  const rb = statusRank(b.data.status);
+  if (ra !== rb) return ra - rb;
+    const ao = a.data.order ?? 999;
+  const bo = b.data.order ?? 999;
+  if (ao !== bo) return ao - bo;
+  return a.data.title.localeCompare(b.data.title);
+});
+---
+
+<BaseLayout title="Delen">
+  <main class="max-w-6xl mx-auto px-6 md:px-12">
+    <header
+      class="py-8 md:py-10 border-b text-center"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+    >
+      <h1 class="font-ui text-xl md:text-2xl font-semibold">Delen</h1>
+
+      <p class="mt-4 mx-auto max-w-prose text-base text-muted">
+        Ruimtes waarin initiatief geoefend wordt. Ik initieer, zodat er plek ontstaat voor anderen om te beginnen.
+      </p>
+    </header>
+
+    <section class="py-10 md:py-12">
+      <div
+        class="p-6 md:p-8"
+        style="background: rgb(var(--c-accent) / 0.04); border: 1px solid rgb(var(--c-fg) / var(--border-alpha));"
+      >
+        <div class="grid gap-6 md:gap-8 md:grid-cols-1">
+          {entries.map((e) => {
+            const href = `/delen/${e.slug}`;
+            const img = e.data.image;
+            const mediaStyle = img ? `background-image:url(${img});` : "";
+            const pills = [
+              e.data.cadence,
+              e.data.status,
+              ...(e.data.tags ?? []),
+            ].filter(Boolean);
+
+            return (
+              <a href={href} class="card card-hover card-delen transition">
+                <div class="card-delen-media" style={mediaStyle}></div>
+
+                <div class="p-7">
+                  <h3 class="font-ui text-lg font-semibold text-brand">{e.data.title}</h3>
+                  {e.data.subtitle ? <p class="mt-2 text-fg">{e.data.subtitle}</p> : null}
+
+                  {pills.length ? (
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {pills.slice(0, 6).map((t) => (
+                        <span class="pill">{t}</span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

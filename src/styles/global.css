@@ -1,0 +1,234 @@
+/* src/styles/global.css — Outline Studio (clean) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   Design tokens
+   ========================= */
+:root {
+  /* Core palette (RGB for Tailwind alpha) */
+  --c-bg: 236 233 228;
+  --c-fg: 18 27 38;
+  --c-brand: 8 50 63;
+  --c-muted: 135 135 135;
+  --c-accent: 191 58 6;
+  --c-surface: 242 242 242;
+  --c-onbrand: 242 242 242;
+
+  /* Typography */
+  --font-sans: "Inter";
+  --font-serif: "Literata";
+
+  --reading-size: 18.5px;
+  --reading-leading: 1.66;
+  --reading-measure: 66ch;
+
+  /* Line language */
+  --border-alpha: 0.18;
+  --ring-accent-alpha: 0.30;
+
+  /* Outline Studio: flat + crisp */
+  --radius-frame: 0px;
+  --radius-card: 0px;
+
+  --shadow-frame: 0 0 0 rgb(0 0 0 / 0);
+  --shadow-card-hover: 0 0 0 rgb(0 0 0 / 0);
+}
+
+/* =========================
+   Base
+   ========================= */
+@layer base {
+  body {
+    @apply bg-bg text-fg font-serif;
+    font-size: var(--reading-size);
+    line-height: var(--reading-leading);
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  nav, button,
+  .font-ui {
+    font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto,
+      Helvetica, Arial, sans-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* =========================
+   Components
+   ========================= */
+@layer components {
+  /* Reading width helper */
+  .measure {
+    max-width: var(--reading-measure);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Frames (if you still use them elsewhere) */
+  .frame {
+    @apply overflow-hidden;
+    border-radius: var(--radius-frame);
+    border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    box-shadow: var(--shadow-frame);
+  }
+
+  .frame--brand {
+    @apply bg-brand text-onbrand;
+    border-color: rgb(var(--c-onbrand) / 0.30);
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-surface text-fg;
+    border-radius: var(--radius-card);
+    border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+  }
+
+  /* “Smart” hover: lift + stronger border, no shadow */
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgb(var(--c-fg) / 0.26);
+  }
+
+
+  /* Card variants (Denken / Doen / Delen)
+     - Keep the same card base everywhere.
+     - Only vary the “humanity” layer. */
+
+  /* Doen: bold accent bar (4× hairline). */
+  .card-doen {
+    position: relative;
+    overflow: hidden; /* clip the bar to the radius */
+    
+  }
+  .card-doen::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px; /* 4 × hairline (2px) */
+    background: rgb(var(--c-accent) / 0.10);
+  }
+
+  /* Delen: image strip + subtle accent wash (12× hairline). */
+  .card-delen {
+    overflow: hidden;
+  }
+  .card-delen-media {
+    position: relative;
+    height: 480px; /* 12 × hairline (2px) */
+    background: rgb(var(--c-bg) / 0.8);
+    background-size: cover;
+    background-position: center;
+  }
+  .card-delen-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(var(--c-accent) / 0.10);
+    pointer-events: none;
+  }
+
+  /* Pills */
+  .pill {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-ui;
+    border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    background: rgb(var(--c-bg) / 0.65);
+    color: rgb(var(--c-fg) / 0.82);
+  }
+
+  /* Links */
+  .a-link {
+    @apply text-accent underline underline-offset-4 hover:no-underline;
+  }
+
+  /* CTA button */
+  .btn-accent {
+    @apply inline-flex items-center justify-center rounded-xl px-6 py-3
+      bg-accent text-onbrand font-semibold font-ui
+      hover:opacity-90 focus:outline-none;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+
+  .btn-accent:focus-visible {
+    box-shadow: 0 0 0 4px rgb(var(--c-accent) / var(--ring-accent-alpha));
+  }
+
+  /* Sidebar nav */
+  .nav-link {
+    @apply inline-flex items-center gap-3 text-fg no-underline;
+  }
+
+  .nav-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid rgb(var(--c-fg) / var(--border-alpha));
+    flex: 0 0 auto;
+  }
+
+  .nav-link[data-active="true"] .nav-dot {
+    background: rgb(var(--c-accent));
+    border-color: rgb(var(--c-accent));
+  }
+
+  .nav-link[aria-current="page"] {
+    font-weight: 600;
+  }
+
+  /* Hairlines (home fold + divider) */
+  .hairline {
+    height: 2px;
+    background-color: rgb(var(--c-accent));
+  }
+
+  /* Force full-bleed even inside max-width containers */
+  .hairline--fullbleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Fixed at bottom of viewport */
+  .hairline--fold {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45; /* under menu (50), above content */
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 160ms ease;
+  }
+
+  .is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Fixed at top of viewport */
+.hairline--top {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 45; /* under menu (50), above content */
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 160ms ease;
+}
+}
+

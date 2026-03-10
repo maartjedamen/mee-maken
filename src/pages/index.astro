@@ -1,0 +1,140 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Logo from "../components/Logo.astro";
+---
+
+<BaseLayout title="Maartje Damen">
+  <main class="max-w-6xl mx-auto px-6 md:px-12">
+    <!-- HERO / COVER -->
+    <section
+      id="home-hero"
+      class="min-h-screen flex flex-col items-center justify-center text-center pt-10 pb-28 md:pt-14 md:pb-36"
+    >
+      <a href="/#" class="inline-flex items-center justify-center" aria-label="Home">
+        <Logo class="w-28 h-28 md:w-44 md:h-44 text-accent" />
+      </a>
+
+      <p class="mt-4 font-ui text-lg md:text-xl font-semibold text-fg">
+        Ruimte ontwerpen voor initiatief
+      </p>
+
+      <p class="mt-7 measure text-base text-fg">
+        Ik geloof dat een samenleving pas echt samenleeft als iedereen de ruimte heeft om iets nieuws te beginnen.
+      </p>
+
+      <p class="mt-6 measure text-base text-fg">
+        In de topsport is zichtbaar hoe regels, doelen en onderlinge afhankelijkheid samenwerking mogelijk maken. In de samenleving werken die mechanismen minder expliciet, maar niet minder bepalend. Dat raakt voor mij de kern van samenleven en daarmee van een gezonde democratie. Sport en verenigingsleven bieden mij een lens om te begrijpen hoe we samenleven willen vormgeven.
+      </p>
+
+      <p class="mt-6 measure text-base text-fg">
+        Democratie is geen systeem dat je ontvangt en je bijdrage stopt niet bij de stembus. Het is een praktijk die je elke dag met elkaar maakt. Wie kan beginnen, en wie geraakt wordt door wat volgt, bepaalt of initiatief voor iedereen werkelijk bereikbaar is.
+      </p>
+
+      <p class="mt-6 measure text-base text-muted">
+        Ik probeer dat begrip te vangen in drie vormen. Soms door te reflecteren en te schrijven, soms door gewoon te doen, te beleven en soms door te creëren.
+      </p>
+    </section>
+
+    <div id="home-divider" class="hairline hairline--fullbleed" aria-hidden="true"></div>
+    <div id="sticky-line-anchor" aria-hidden="true"></div>
+
+    <!-- THEMES (no border-t here; hairline is the divider) -->
+    <section class="py-10 md:py-14">
+      <div class="grid md:grid-cols-12 gap-8">
+        <div class="md:col-span-4">
+          <h2 class="font-ui text-sm uppercase tracking-wider text-muted">
+            Drie hoofdthema’s
+          </h2>
+        </div>
+
+        <div class="md:col-span-8 space-y-3">
+          <p class="font-ui text-lg">
+            <span class="text-brand font-semibold">Initiatiefgedreven democratie</span> → wie kan en mag iets beginnen?
+          </p>
+          <p class="font-ui text-lg">
+            <span class="text-brand font-semibold">Impactgedreven democratie</span> → wie wordt met verandering geraakt?
+          </p>
+          <p class="font-ui text-lg">
+            <span class="text-brand font-semibold">Ambtelijk vakmanschap</span> → wie weegt dit samen, over schalen heen?
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROUTES -->
+    <section
+      class="py-10 md:py-14 border-t"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+    >
+      <div class="grid md:grid-cols-3 gap-6 md:gap-8">
+        <a href="/denken" class="card card-hover p-7 transition">
+          <h3 class="font-ui text-lg font-semibold text-brand">Denken</h3>
+          <p class="mt-2 text-fg">Gedachten, essays en groter denkwerk.</p>
+        </a>
+
+        <a href="/doen" class="card card-hover p-7 transition">
+          <h3 class="font-ui text-lg font-semibold text-brand">Doen</h3>
+          <p class="mt-2 text-fg">Producten, diensten en ervaring.</p>
+        </a>
+
+        <a href="/delen" class="card card-hover p-7 transition">
+          <h3 class="font-ui text-lg font-semibold text-brand">Delen</h3>
+          <p class="mt-2 text-fg">Ruimtes om mee te doen.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section
+      class="py-12 md:py-16 border-t text-center"
+      style="border-color: rgb(var(--c-fg) / var(--border-alpha));"
+    >
+      <p class="measure text-base text-fg">
+        Ik werk aan de inrichting van besluitvorming en samenwerking in complexe systemen. Dat doe ik in de publieke sector en in de sportpraktijk. Ik ontwerp principes, processen en kaders die rechtvaardigheid, uitvoerbaarheid en legitimiteit met elkaar verbinden. In alles wat ik doe, probeer ik ruimte te ontwerpen voor initiatief.
+      </p>
+
+      <p class="mt-4 measure font-ui font-semibold text-brand">
+        Ik droom graag. Droom je mee?
+      </p>
+
+      <div class="mt-8">
+        <a href="mailto:maartje.damen98@gmail.com" class="btn-accent">
+          Kom in contact
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Fixed fold hairline: visible only while divider is BELOW the viewport bottom -->
+  <div id="home-fold-line" class="hairline hairline--fold" aria-hidden="true"></div>
+
+  <script is:inline>
+    (function () {
+      const foldLine = document.getElementById("home-fold-line");
+      const divider = document.getElementById("home-divider");
+      if (!foldLine || !divider) return;
+
+      const LINE_H = 2;
+
+      const update = () => {
+        const r = divider.getBoundingClientRect();
+        const dividerTop = r.top;
+
+        // If the divider is still below the viewport bottom edge, keep fold line visible.
+        // As soon as the divider reaches (or enters) the viewport, hide the fold line.
+        // This produces the "klik" feeling without double lines.
+        const dividerStillBelowFold = dividerTop > (window.innerHeight - LINE_H);
+
+        if (dividerStillBelowFold) {
+          foldLine.classList.remove("is-hidden");
+        } else {
+          foldLine.classList.add("is-hidden");
+        }
+      };
+
+      window.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+      update();
+    })();
+  </script>
+</BaseLayout>

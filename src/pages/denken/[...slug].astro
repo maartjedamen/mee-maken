@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("denken");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, subtitle, externalUrl, externalLabel } = entry.data;
+const externalHost =
+  externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "") : null;
+const externalText = externalLabel ?? externalHost ?? "extern";---
+
+<BaseLayout title={title}>
+  <main class="max-w-4xl mx-auto px-6 md:px-12">
+    <header class="py-8 md:py-10">
+      <a href="/denken" class="a-link no-underline hover:underline font-ui">
+        ← Terug naar overzicht
+      </a>
+
+      <h1 class="mt-5 text-xl md:text-3xl font-semibold text-fg font-ui">
+        {title}
+      </h1>
+
+      {subtitle ? (
+        <p class="mt-3 measure text-base text-muted">{subtitle}</p>
+      ) : null}
+
+      {externalUrl ? (
+        <p class="mt-4 text-sm text-muted">
+          gepubliceerd op:{" "}
+          <a class="a-link" href={externalUrl} target="_blank" rel="noopener noreferrer">
+            {externalText} ↗
+          </a>
+        </p>
+      ) : null}
+
+      <div class="mt-8 border-t" style="border-color: rgb(var(--c-fg) / var(--border-alpha));" />
+    </header>
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    <section class="mt-12">
+      <div class="card p-6 text-center">
+        <p class="font-semibold mb-1 text-brand font-ui">Gedachten delen?</p>
+        <p class="meta text-sm mb-4">
+          Reacties komen hier later. Voor nu: stuur me gerust een bericht.
+        </p>
+        <a href="mailto:maartje.damen98@gmail.com" class="a-link">
+          Neem contact op
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

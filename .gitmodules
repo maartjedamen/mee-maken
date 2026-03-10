@@ -1,0 +1,3 @@
+[submodule "src/content/denken"]
+	path = src/content/denken
+	url = https://github.com/maartjedamen/03_essays.git

@@ -22,3 +22,7 @@ jobs:
           git add src/content/denken
           git diff --staged --quiet || git commit -m "auto: update essays submodule pointer"
           git push
+
+      - name: Trigger Netlify build
+        run: |
+          curl -X POST -d '{}' ${{ secrets.NETLIFY_BUILD_HOOK }}

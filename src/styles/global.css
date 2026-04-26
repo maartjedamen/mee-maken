@@ -232,3 +232,142 @@ html {
 }
 }
 
+/* =========================
+   Print
+   Plak dit onderaan global.css
+   ========================= */
+
+@media print {
+
+  /* ── Verberg alle chrome ── */
+  .stickyline,
+  #menu-toggle,
+  #overlay,
+  #sidebar,
+  footer,
+  body > a[href="javascript:history.back()"],
+  main header > a,
+  main > section:last-of-type {
+    display: none !important;
+  }
+
+  /* ── Pagina-setup ── */
+  @page {
+    size: A4 portrait;
+    margin: 22mm 22mm 28mm 22mm;
+  }
+
+  /* ── Reset achtergrond + kleur ── */
+  html,
+  body,
+  main,
+  article,
+  header {
+    background: white !important;
+    color: rgb(var(--c-fg)) !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Typografie — jouw eigen tokens ── */
+  body {
+    font-size: var(--reading-size);
+    line-height: var(--reading-leading);
+  }
+
+  /* Geen max-width — pagina-marges regelen de breedte */
+  main,
+  #main-content,
+  .max-w-4xl,
+  .max-w-6xl {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .py-10,
+  .md\:py-14 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* ── Article header ── */
+  main header {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  main header h1 {
+    font-size: 22pt !important;
+    line-height: 1.25 !important;
+    margin-bottom: 4pt !important;
+  }
+
+  /* Subtitel in brand-kleur */
+  main header p {
+    color: rgb(var(--c-brand)) !important;
+  }
+
+  /* Scheidingslijn onder de header */
+  main header > div[class*="border-t"] {
+    border-color: rgb(var(--c-fg) / var(--border-alpha)) !important;
+    margin-top: 14pt !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── Bodytekst ── */
+  article {
+    margin-top: 16pt !important;
+  }
+
+  article p,
+  article li {
+    font-size: var(--reading-size) !important;
+    line-height: var(--reading-leading) !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Geen pagina-einde midden in koppen of alinea's */
+  article h2,
+  article h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  article p,
+  article blockquote {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Links: geen URL weergeven */
+  a[href]::after {
+    content: none !important;
+  }
+
+  /* ── Pills ── */
+  .pill {
+    border: 0.5pt solid rgb(var(--c-fg) / var(--border-alpha)) !important;
+    background: transparent !important;
+    font-size: 7pt !important;
+    padding: 1pt 5pt !important;
+  }
+
+  /* ── Print-footer via CSS @page ── */
+  @page {
+    @bottom-center {
+      content: "Maartje Damen  ·  mee-maken.nl";
+      font-family: var(--font-sans), sans-serif;
+      font-size: 7pt;
+      color: rgb(var(--c-muted));
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: var(--font-sans), sans-serif;
+      font-size: 7pt;
+      color: rgb(var(--c-muted));
+    }
+  }
+
+}

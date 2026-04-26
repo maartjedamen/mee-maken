@@ -15,7 +15,8 @@ const { Content } = await entry.render();
 const { title, subtitle, externalUrl, externalLabel } = entry.data;
 const externalHost =
   externalUrl ? new URL(externalUrl).hostname.replace(/^www\./, "") : null;
-const externalText = externalLabel ?? externalHost ?? "extern";---
+const externalText = externalLabel ?? externalHost ?? "extern";
+---
 
 <BaseLayout title={title}>
   <main class="max-w-4xl mx-auto px-6 md:px-12">
@@ -24,9 +25,37 @@ const externalText = externalLabel ?? externalHost ?? "extern";---
         ← Terug naar overzicht
       </a>
 
-      <h1 class="mt-5 text-xl md:text-3xl font-semibold text-fg font-ui">
-        {title}
-      </h1>
+      <div class="mt-5 flex items-start justify-between gap-6 flex-wrap">
+        <h1 class="text-xl md:text-3xl font-semibold text-fg font-ui">
+          {title}
+        </h1>
+
+        <button
+          onclick="window.print()"
+          class="print-btn shrink-0 inline-flex items-center gap-2 text-sm font-ui
+                 text-muted border-b border-current pb-0.5
+                 hover:text-accent transition-colors"
+          aria-label="Sla op als PDF"
+          title="Sla op als PDF"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13" height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          opslaan als pdf
+        </button>
+      </div>
 
       {subtitle ? (
         <p class="mt-3 measure text-base text-muted">{subtitle}</p>

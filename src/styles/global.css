@@ -232,11 +232,6 @@ html {
 }
 }
 
-/* =========================
-   Print
-   Plak dit onderaan global.css
-   ========================= */
-
 @media print {
 
   /* ── Verberg alle chrome ── */
@@ -251,10 +246,12 @@ html {
     display: none !important;
   }
 
-  /* ── Pagina-setup ── */
+  /* ── Pagina-setup ──
+     @page margin op 0: jij regelt de witruimte via body padding,
+     zodat de browser-instelling "geen marges" geen effect heeft. */
   @page {
     size: A4 portrait;
-    margin: 22mm 22mm 28mm 22mm;
+    margin: 0;
   }
 
   /* ── Reset achtergrond + kleur ── */
@@ -269,13 +266,14 @@ html {
     print-color-adjust: exact;
   }
 
-  /* ── Typografie — jouw eigen tokens ── */
+  /* ── Marges via body padding — browserproof ── */
   body {
+    padding: 22mm 22mm 28mm 22mm !important;
     font-size: var(--reading-size);
     line-height: var(--reading-leading);
   }
 
-  /* Geen max-width — pagina-marges regelen de breedte */
+  /* Geen max-width — padding op body regelt de breedte */
   main,
   #main-content,
   .max-w-4xl,
@@ -303,12 +301,10 @@ html {
     margin-bottom: 4pt !important;
   }
 
-  /* Subtitel in brand-kleur */
   main header p {
     color: rgb(var(--c-brand)) !important;
   }
 
-  /* Scheidingslijn onder de header */
   main header > div[class*="border-t"] {
     border-color: rgb(var(--c-fg) / var(--border-alpha)) !important;
     margin-top: 14pt !important;
@@ -328,7 +324,6 @@ html {
     widows: 3;
   }
 
-  /* Geen pagina-einde midden in koppen of alinea's */
   article h2,
   article h3 {
     page-break-after: avoid;
@@ -341,7 +336,6 @@ html {
     break-inside: avoid;
   }
 
-  /* Links: geen URL weergeven */
   a[href]::after {
     content: none !important;
   }

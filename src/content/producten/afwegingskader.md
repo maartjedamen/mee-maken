@@ -6,8 +6,7 @@ tags:
   - kader
   - ambtelijk vakmanschap
 relatedThinking:
-  - /denken/06_initiatief_wordt_beloond
-  - /denken/2026-02-06
+  - /denken/2025-12-13_initiatief-wordt-beloond
 cta:
   label: Sparren over toepassing?
   href: mailto:maartje.damen98@gmail.com

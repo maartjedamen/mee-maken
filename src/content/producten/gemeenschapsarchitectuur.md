@@ -6,8 +6,8 @@ tags:
   - traject
   - netwerkontwerp
 relatedThinking:
-  - /denken/04_we_moeten_blijven_spelen
-  - /denken/06_initiatief_wordt_beloond
+  - /denken/2025-10-17_we-moeten-blijven-spelen
+  - /denken/2025-12-13_initiatief-wordt-beloond
 cta:
   label: Samen een netwerk ontwerpen?
   href: mailto:maartje.damen98@gmail.com

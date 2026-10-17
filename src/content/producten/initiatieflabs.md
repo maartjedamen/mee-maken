@@ -6,7 +6,7 @@ tags:
   - workshop
   - teamleren
 relatedThinking:
-  - /denken/04_we_moeten_blijven_spelen
+  - /denken/2025-10-17_we-moeten-blijven-spelen
 cta:
   label: Plan een sessie
   href: mailto:maartje.damen98@gmail.com

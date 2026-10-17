@@ -6,7 +6,7 @@ tags:
   - infrastructuur
   - toegankelijkheid
 relatedThinking:
-  - /denken/2026-02-06
+  - /denken/2025-12-11_voordeur-voor-de-overheid
 cta:
   label: Interesse in een pilot?
   href: mailto:maartje.damen98@gmail.com
